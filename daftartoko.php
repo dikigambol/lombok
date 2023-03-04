@@ -22,42 +22,36 @@
                     <b>Masukkan Data Toko Obat Pertanian Anda!</b>
                 </div>
                 <div class="panel-body">
-                  <form name="form1" method="post" action="daftartokoFungsi.php">
+                  <form name="form1" method="post" enctype='multipart/form-data' action="daftartokoFungsi.php">
                     <table class="table">
-                      <tr>
-                        <td>Kode</td>
-                        <td>
-                          <input name="txtKode" type="text" maxlength="3" size="6" value="<?php echo $txtKode; ?>" placeholder="format 'T00' T lalu nomor urut tanpa spasi">
-                        </td>
-                      </tr>
                       <tr>
                         <td width="135">Nama Toko</td>
                         <td width="450">
-                          <input name="txtToko" type="text" value="<?php echo $txtToko; ?>" size="60" maxlength="30">
+                          <input name="txtToko" type="text">
                         </td>
                       </tr>
                       <tr>
                         <td>Alamat Toko</td>
                         <td>
-                          <textarea name="txtAlamatToko" cols="50" rows="4" value="<?php echo $txtAlamatToko; ?>"></textarea>
+                          <textarea name="txtAlamatToko"></textarea>
                         </td>
                       </tr>
                       <tr>
                         <td>Nomor Telepon</td>
                         <td>
-                        <input name="txtNomorTelepon" type="number" value="<?php echo $txtNomorTelepon; ?>" size="60" maxlength="30">
+                        <input name="txtNomorTelepon" type="number">
                         </td>
                       </tr>
                       <tr>
                         <td>Foto Toko</td>
                         <td>
-                        <input name="txtGambarToko" type="file" value="<?php echo $txtGambarToko; ?>" placeholder="masukan url foto">
+                        <input name="txtGambarToko" type="file">
                         </td>
                       </tr>
                       <tr>
                         <td>Link Google Map Toko</td>
                         <td>
-                        <textarea name="txtMapToko" cols="50" rows="4" value="<?php echo $txtMapToko; ?>"></textarea>
+                        <textarea name="txtMapToko" cols="50" rows="4"></textarea>
                         </td>
                       </tr>
                       <tr>

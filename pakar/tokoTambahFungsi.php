@@ -41,29 +41,36 @@ if (trim($txtToko) == "") {
     $queryId = mysqli_query($koneksi, $getlastId);
     $resultId = mysqli_fetch_array($queryId);
 
-    $lastId = trim($resultId['id_toko'], "T") + 1;
+    $resId = $resultId['id_toko'] ?? "empty";
+
     $newId = '';
-    
-    if($lastId < 10) {
-        $newId = "T0".$lastId;
-    }else{
-        $newId = "T".$lastId;
+
+    if ($resId == "empty") {
+        $newId = 'T01';
+    } else {
+        $lastId = trim($resId, "T") + 1;
+        if ($lastId < 10) {
+            $newId = "T0" . $lastId;
+        } else {
+            $newId = "T" . $lastId;
+        }
     }
 
     //insert gambar ke dir
     $tempdir = "../image/";
     if (!file_exists($tempdir))
         mkdir($tempdir, 0755);
-    $target_path1 = $tempdir . basename($_FILES['txtGambarToko']['name']);
 
-    //nama gambar
-    $nama_gambar = $_FILES['txtGambarToko']['name'];
+    $temp = explode(".", $_FILES["txtGambarToko"]["name"]);
+    $newfilename = round(microtime(true)) . '.' . end($temp);
+
+    $target_path1 = $tempdir.$newfilename;
 
     move_uploaded_file($_FILES['txtGambarToko']['tmp_name'], $target_path1);
 
     //insert ke table
     $sql = "INSERT into toko (id_toko, nama_toko, alamat_toko, nomor_telepon, gambar_toko, map_toko)";
-    $sql .= "VALUES ('$newId', '$txtToko', '$txtAlamatToko', '$txtNomorTelepon', '$nama_gambar', '$txtMapToko')";
+    $sql .= "VALUES ('$newId', '$txtToko', '$txtAlamatToko', '$txtNomorTelepon', '$newfilename', '$txtMapToko')";
     mysqli_query($koneksi, $sql);
 
     echo '<div class="container">

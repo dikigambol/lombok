@@ -1,66 +1,70 @@
 <?php
-    include "koneksi.php";
+include "koneksi.php";
 
-    //get variable dari form
-    $txtKode= $_POST['txtKode'];
-    $txtToko= $_POST['txtToko'];
-    $txtAlamatToko= $_POST['txtAlamatToko'];
-    $txtNomorTelepon= $_POST['txtNomorTelepon'];
-    $txtGambarToko= $_POST['txtGambarToko'];
-    $txtMapToko= $_POST['txtMapToko'];
-    
-    //validasi
-    if(trim($txtKode)==""){
-        echo '<div class="container">
-                <div class="alert alert-danger role=alert">
-                    <b>Kode masih kosong, Ulangi Kembali</b>
-                </div>
-             </div>';
-             include "daftartoko.php";
-    }
-    elseif(trim($txtToko)==""){
-        echo '<div class="container">
+//get variable dari form
+$txtToko = $_POST['txtToko'];
+$txtAlamatToko = $_POST['txtAlamatToko'];
+$txtNomorTelepon = $_POST['txtNomorTelepon'];
+$txtMapToko = $_POST['txtMapToko'];
+
+//validasi
+if (trim($txtToko) == "") {
+    echo '<div class="container">
                 <div class="alert alert-danger role=alert">
                     <b>Nama toko masih kosong, isi terlebih dahulu</b>
                 </div>
              </div>';
-             include "daftartoko.php";
-    }
-    elseif(trim($txtAlamatToko)==""){
-        echo '<div class="container">
+    include "daftartoko.php";
+} elseif (trim($txtAlamatToko) == "") {
+    echo '<div class="container">
                 <div class="alert alert-danger role=alert">
                     <b>Alamat Toko masih kosong, isi terlebih dahulu</b>
                 </div>
              </div>';
-             include "daftartoko.php";
-    }
-    elseif(trim($txtNomorTelepon)==""){
-        echo '<div class="container">
+    include "daftartoko.php";
+} elseif (trim($txtNomorTelepon) == "") {
+    echo '<div class="container">
                 <div class="alert alert-danger role=alert">
                     <b>Nomor telepon masih kosong, isi terlebih dahulu</b>
                 </div>
              </div>';
-             include "daftartoko.php";
-    }
-    elseif(trim($txtGambarToko)==""){
-        echo '<div class="container">
-                <div class="alert alert-danger role=alert">
-                    <b>Url Foto toko masih kosong, isi terlebih dahulu</b>
-                </div>
-             </div>';
-             include "daftartoko.php";
-    }
-    else{
-        //insert ke table
-        $sql = "INSERT into toko (id_toko, nama_toko, alamat_toko, nomor_telepon, gambar_toko, map_toko)";
-        $sql.= "VALUES ('$txtKode', '$txtToko', '$txtAlamatToko', '$txtNomorTelepon', '$txtGambarToko', '$txtMapToko')";
-        mysqli_query($koneksi, $sql);
+    include "daftartoko.php";
+} else {
+    $getlastId = "SELECT id_toko FROM toko ORDER BY id_toko DESC LIMIT 1";
+    $queryId = mysqli_query($koneksi, $getlastId);
+    $resultId = mysqli_fetch_array($queryId);
 
-        echo '<div class="container">
-                <div class="alert alert-success role=alert">
-                    <b>DATA BERHASIL DISIMPAN</b>
-                </div>
-             </div>';
-             include "datatoko.php"; 
+    $resId = $resultId['id_toko'] ?? "empty";
+
+    $newId = '';
+
+    if ($resId == "empty") {
+        $newId = 'T01';
+    } else {
+        $lastId = trim($resId, "T") + 1;
+        if ($lastId < 10) {
+            $newId = "T0" . $lastId;
+        } else {
+            $newId = "T" . $lastId;
+        }
     }
-?>
+
+    //insert gambar ke dir
+    $tempdir = "image/";
+    if (!file_exists($tempdir))
+        mkdir($tempdir, 0755);
+
+    $temp = explode(".", $_FILES["txtGambarToko"]["name"]);
+    $newfilename = round(microtime(true)) . '.' . end($temp);
+
+    $target_path1 = $tempdir . $newfilename;
+
+    move_uploaded_file($_FILES['txtGambarToko']['tmp_name'], $target_path1);
+
+    //insert ke table
+    $sql = "INSERT into toko (id_toko, nama_toko, alamat_toko, nomor_telepon, gambar_toko, map_toko)";
+    $sql .= "VALUES ('$newId', '$txtToko', '$txtAlamatToko', '$txtNomorTelepon', '$newfilename', '$txtMapToko')";
+    mysqli_query($koneksi, $sql);
+    
+    echo "<meta http-equiv='refresh' content='0; url=index.php?page=datatoko'>";
+}
